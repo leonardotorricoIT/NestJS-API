@@ -7,7 +7,6 @@ import { ArtistsModule } from './artists/artists.module';
 import { AlbumsModule } from './albums/albums.module';
 import { GenresModule } from './genres/genres.module';
 import { SongsModule } from './songs/songs.module';
-import { ArtistService } from './artist/artist.service';
 
 @Module({
   imports: [
@@ -23,6 +22,6 @@ import { ArtistService } from './artist/artist.service';
     GenresModule,
     SongsModule,
   ],
-  providers: [ArtistService],
+  providers: [],
 })
 export class AppModule {}
