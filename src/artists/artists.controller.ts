@@ -40,17 +40,25 @@ export class ArtistsController {
   @ApiCreatedResponse({
     description: 'Artist created successfully',
     type: Artist,
+    example: {
+      id: '123e4567-e89b-12d3-a456-426614174000',
+      name: 'Peso pluma',
+      country: 'Mexico',
+      debut_year: 2019,
+      created_at: '2024-01-15T10:30:00.000Z',
+      updated_at: '2024-01-15T10:30:00.000Z',
+    },
   })
   @ApiBody({
     description: 'Artist data for creation',
     examples: {
-      'rock-artist': {
-        summary: 'Rock Artist Example',
-        description: 'Example of creating a rock artist',
+      'bad-bunny-example': {
+        summary: 'Bad Bunny Example',
+        description: 'Another example of creating an artist',
         value: {
-          name: 'The Beatles',
-          country: 'United Kingdom',
-          debut_year: 1960,
+          name: 'Bad bunny',
+          country: 'Puerto Rico',
+          debut_year: 2016,
         },
       },
     },
@@ -63,45 +71,23 @@ export class ArtistsController {
   @ApiOperation({
     summary: 'Get all artists',
     description:
-      'Retrieves all artists with optional filtering by country or debut year',
-  })
-  @ApiOkResponse({
-    description: 'List of artists retrieved successfully',
-    type: [Artist],
+      'Retrieves all artists. Can be filtered by country or debut year.',
   })
   @ApiQuery({
     name: 'country',
     required: false,
     description: 'Filter artists by country',
-    example: 'United States',
-    schema: { type: 'string' },
+    example: 'Mexico',
   })
   @ApiQuery({
     name: 'year',
     required: false,
     description: 'Filter artists by debut year',
-    example: '1980',
-    schema: { type: 'string' },
+    example: '2019',
   })
-  @ApiResponse({
-    status: HttpStatus.OK,
-    description: 'Filtered artists by country',
-    schema: {
-      type: 'array',
-      items: {
-        $ref: '#/components/schemas/Artist',
-      },
-      example: [
-        {
-          id: 'uuid-example',
-          name: 'Madonna',
-          country: 'United States',
-          debut_year: 1982,
-          createdAt: '2024-01-01T00:00:00.000Z',
-          updatedAt: '2024-01-01T00:00:00.000Z',
-        },
-      ],
-    },
+  @ApiOkResponse({
+    description: 'List of artists retrieved successfully',
+    type: [Artist],
   })
   findAll(@Query('country') country?: string, @Query('year') year?: string) {
     if (country) {
@@ -130,32 +116,9 @@ export class ArtistsController {
   })
   @ApiNotFoundResponse({
     description: 'Artist not found',
-    schema: {
-      type: 'object',
-      properties: {
-        statusCode: { type: 'number', example: 404 },
-        message: {
-          type: 'string',
-          example:
-            'Artist with ID 123e4567-e89b-12d3-a456-426614174000 not found',
-        },
-        error: { type: 'string', example: 'Not Found' },
-      },
-    },
   })
   @ApiBadRequestResponse({
     description: 'Invalid UUID format',
-    schema: {
-      type: 'object',
-      properties: {
-        statusCode: { type: 'number', example: 400 },
-        message: {
-          type: 'string',
-          example: 'Validation failed (uuid is expected)',
-        },
-        error: { type: 'string', example: 'Bad Request' },
-      },
-    },
   })
   findOne(@Param('id', ParseUUIDPipe) id: string) {
     return this.artistsService.findOne(id);
@@ -175,22 +138,29 @@ export class ArtistsController {
   })
   @ApiBody({
     description: 'Artist data for update (all fields optional)',
-    schema: { $ref: '#/components/schemas/UpdateArtistDto' },
     examples: {
-      'partial-update': {
-        summary: 'Partial Update',
-        description: 'Update only specific fields',
+      'update-name-only': {
+        summary: 'Update Name Only',
+        description: 'Update only the artist name',
         value: {
-          name: 'The Beatles (Updated)',
+          name: 'Peso pluma (Updated)',
+        },
+      },
+      'update-country-and-year': {
+        summary: 'Update Country and Year',
+        description: 'Update country and debut year',
+        value: {
+          country: 'Mexico',
+          debut_year: 2020,
         },
       },
       'full-update': {
         summary: 'Full Update',
-        description: 'Update all fields',
+        description: 'Update all fields at once',
         value: {
-          name: 'The Beatles',
-          country: 'England',
-          debut_year: 1962,
+          name: 'Peso pluma',
+          country: 'Mexico',
+          debut_year: 2019,
         },
       },
     },
@@ -203,7 +173,7 @@ export class ArtistsController {
     description: 'Artist not found',
   })
   @ApiBadRequestResponse({
-    description: 'Invalid input data or UUID format',
+    description: 'Invalid UUID format or invalid input data',
   })
   update(
     @Param('id', ParseUUIDPipe) id: string,
